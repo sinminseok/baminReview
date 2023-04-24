@@ -1,0 +1,6 @@
+rootProject.name = 'order'
+include 'order-core'
+include 'order-batch-server'
+include 'order-api-server'
+include 'order-core'
+
