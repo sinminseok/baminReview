@@ -1,4 +1,4 @@
-package com.entity;
+package com.entity.shop;
 
 
 import jakarta.persistence.Entity;

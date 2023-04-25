@@ -1,5 +1,13 @@
+buildscript { // 이놈
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
+
 plugins {
     id 'java'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group 'bamin.example'
@@ -15,6 +23,35 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+    // QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+}
+
+//이놈
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl { //이놈
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets { //이놈
+    main.java.srcDir querydslDir
+}
+
+configurations { // 이놈
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl { // 이놈
+    options.annotationProcessorPath = configurations.querydsl
+}
+compileQuerydsl.doFirst {
+    if(file(querydslDir).exists() )
+        delete(file(querydslDir))
 }
 
 test {
