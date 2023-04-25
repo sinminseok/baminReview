@@ -1,5 +1,5 @@
-package com.entity.order;
-
-public enum OrderStatus {
-    CANCEL,DURING,FINISH
-}
+//package com.entity.order;
+//
+//public enum OrderStatus {
+//    CANCEL,DURING,FINISH
+//}
