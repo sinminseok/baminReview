@@ -1,9 +1,18 @@
-package com.entity.review;
+package com.entity.history;
 
 
+import com.entity.review.ReviewStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReviewHistory {
 
     @Id

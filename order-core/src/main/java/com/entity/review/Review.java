@@ -3,11 +3,19 @@ package com.entity.review;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Review {
 
     @Id
@@ -43,6 +51,19 @@ public class Review {
 
     @OneToOne(mappedBy = "review")
     private ReviewDelivery reviewDelivery;
+
+//    //entity에서 연관관계 entity 등록시 entity로 받아서 저장한다.
+//    public void registerReviewImg(List<ReviewImage> reviewImages){
+//        this.reviewImages = reviewImages;
+//    }
+//
+//    public void registerReviewMenu(List<ReviewMenu> reviewMenus){
+//        this.reviewMenus = reviewMenus;
+//    }
+//
+//    public void registerReviewDelivery(ReviewDelivery reviewDelivery){
+//        this.reviewDelivery = reviewDelivery;
+//    }
 
 
 }
