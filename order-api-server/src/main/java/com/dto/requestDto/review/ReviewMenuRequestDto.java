@@ -1,4 +1,4 @@
-package com.dto.requestDto;
+package com.dto.requestDto.review;
 
 
 import lombok.AllArgsConstructor;
@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewImgRequestDto {
+public class ReviewMenuRequestDto {
 
-    private String imageUrl;
+    private String menuName;
 
 }

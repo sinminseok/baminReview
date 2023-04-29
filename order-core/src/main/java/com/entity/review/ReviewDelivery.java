@@ -19,12 +19,15 @@ public class ReviewDelivery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "review_id")
     private Review review;
 
     @Enumerated(EnumType.STRING)
     private ReviewDeliveryStatus reviewDeliveryStatus;
 
     private String hateReason;
+
+
 
 }

@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,9 +20,8 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
     private Long id;
-
-//    private Long orderNumber;
 
     private Long memberNumber;
 
@@ -28,4 +29,12 @@ public class Order {
     private OrderStatus orderStatus;
 
     private LocalDateTime orderTime;
+
+    @OneToMany(mappedBy = "order",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    private List<OrderMenu> orderMenus = new ArrayList<>();
+
+    public void addOrderMenu(OrderMenu orderMenu){
+        this.orderMenus.add(orderMenu);
+
+    }
 }

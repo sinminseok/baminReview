@@ -1,10 +1,7 @@
 package com.entity.order;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +18,14 @@ public class OrderMenu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private Long orderId;
-
     private String menuName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    public OrderMenu(Order order,String menuName){
+        this.order = order;
+        this.menuName = menuName;
+    }
 }

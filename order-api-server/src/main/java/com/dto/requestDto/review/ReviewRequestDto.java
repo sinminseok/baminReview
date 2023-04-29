@@ -1,11 +1,7 @@
-package com.dto.requestDto;
+package com.dto.requestDto.review;
 
 
-import com.entity.review.Review;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewRequestDto {
+
 
     private Long memberNumber;
 
@@ -27,6 +24,9 @@ public class ReviewRequestDto {
 
     private List<ReviewImgRequestDto> reviewImgRequestDtos;
 
+    private List<ReviewMenuRequestDto> reviewMenuRequestDtos;
+
+    private ReviewDeliveryRequestDto reviewDeliveryRequestDto;
 
 
 }

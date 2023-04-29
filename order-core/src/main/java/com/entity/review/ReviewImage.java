@@ -19,7 +19,6 @@ public class ReviewImage {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    //외래키 매핑(생략 가능)
     @JoinColumn(name = "review_id")
     private Review review;
 

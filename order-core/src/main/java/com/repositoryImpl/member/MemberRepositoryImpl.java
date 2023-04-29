@@ -1,4 +1,4 @@
-package com.repositoryImpl;
+package com.repositoryImpl.member;
 
 import com.entity.member.Member;
 import com.entity.member.QMember;

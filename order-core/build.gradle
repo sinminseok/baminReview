@@ -22,7 +22,7 @@ repositories {
 //당장은 관리하기 편할지 몰라도 프로젝트 규모가 커지면 다른 모듈이 추가되고 해당 모듈에서 사용하지 않는 라이브러리일 수 있다.때문에 최대한 가볍게 core에서 의존성 관리를 하도록 하자
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2:1.4.200'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
     // QueryDSL
