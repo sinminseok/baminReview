@@ -28,6 +28,11 @@ public class ReviewDelivery {
 
     private String hateReason;
 
+    public void update(ReviewDeliveryStatus reviewDeliveryStatus,String hateReason){
+        this.reviewDeliveryStatus = reviewDeliveryStatus;
+        this.hateReason = hateReason;
+    }
+
 
 
 }

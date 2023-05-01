@@ -25,4 +25,8 @@ public class ReviewMenu {
 
     private String menuName;
 
+    public void update(String menuName){
+        this.menuName = menuName;
+    }
+
 }

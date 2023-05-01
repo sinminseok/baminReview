@@ -1,6 +1,12 @@
 package com.repositoryCustom.review;
 
-public interface ReviewRepositoryCustom {
+import com.entity.review.Review;
 
-    void registerImg(String imageUrl);
+import java.util.List;
+
+public interface ReviewRepositoryCustom {
+    List<Review> findallByShopId(Long shopId);
+
+    Review findByReviewId(Long reviewId);
+
 }

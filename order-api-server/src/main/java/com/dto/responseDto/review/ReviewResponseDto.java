@@ -1,7 +1,13 @@
-package com.dto.requestDto.review;
+package com.dto.responseDto.review;
 
 
-import lombok.*;
+import com.dto.requestDto.review.ReviewDeliveryRequestDto;
+import com.dto.requestDto.review.ReviewImgRequestDto;
+import com.dto.requestDto.review.ReviewMenuRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -9,8 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewRequestDto {
-
+public class ReviewResponseDto {
 
     private Long reviewId;
 
@@ -29,6 +34,4 @@ public class ReviewRequestDto {
     private List<ReviewMenuRequestDto> reviewMenuRequestDtos;
 
     private ReviewDeliveryRequestDto reviewDeliveryRequestDto;
-
-
 }

@@ -1,4 +1,4 @@
-package com.dto.requestDto.review;
+package com.dto.responseDto.order;
 
 
 import lombok.AllArgsConstructor;
@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewMenuRequestDto {
-
-    private Long id;
+public class OrderMenuResponseDto {
 
     private String menuName;
-
 }

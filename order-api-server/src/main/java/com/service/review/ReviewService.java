@@ -12,21 +12,25 @@ import com.entity.review.ReviewImage;
 import com.entity.review.ReviewMenu;
 import com.repository.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-//Review는 루트애그리거트이다. 따라서 Review를 통해서만 CRUD가 진행되고 완전한 객체를 제공하고 관리해야합니다.
-public class ReviewRegisterService {
+public class ReviewService {
 
-    //같은 라이프사이클을 갖는 엔티티를 각각의 repository로 관리하면 외부에서 엔티티에 직접 접근해 데이터를 변경할 수 있게되어버리고 일관성이 깨짐
     private final ReviewRepository reviewRepository;
 
+    //shopId로 모든 리뷰조회
+
+    @Transactional
     public Long register(ReviewRequestDto reviewRequestDto) {
         Review review = Review.builder()
                 .memberNumber(reviewRequestDto.getMemberNumber())
@@ -44,6 +48,45 @@ public class ReviewRegisterService {
         Review save = reviewRepository.save(review);
         return save.getId();
     }
+
+    @Transactional
+    public void update(ReviewRequestDto reviewRequestDto) {
+
+        Review review = reviewRepository.findById(reviewRequestDto.getReviewId()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
+        //변경감지를 이용한 엔티티 수정
+        updateReviewMenus(reviewRequestDto, review);
+        updateReviewImgs(reviewRequestDto, review);
+        updateReviewDelivery(reviewRequestDto, review);
+
+        //새로 변경된 정보를 담을 엔티티 생성
+        Review updateReview = Review.builder()
+                .content(reviewRequestDto.getContent())
+                .starPoint(reviewRequestDto.getStarPoint())
+                .build();
+
+
+        review.updateReview(updateReview);
+
+
+    }
+
+    public void updateReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
+        for (int i = 0; i < review.getReviewMenus().size(); i++) {
+            review.getReviewMenus().get(i).update(reviewRequestDto.getReviewMenuRequestDtos().get(i).getMenuName());
+        }
+    }
+
+    public void updateReviewDelivery(ReviewRequestDto reviewRequestDto, Review review) {
+        review.getReviewDelivery().update(reviewRequestDto.getReviewDeliveryRequestDto().getReviewDeliveryStatus(), reviewRequestDto.getReviewDeliveryRequestDto().getHateReason());
+    }
+
+
+    public void updateReviewImgs(ReviewRequestDto reviewRequestDto, Review review) {
+        for (int i = 0; i < review.getReviewImages().size(); i++) {
+            review.getReviewImages().get(i).update(reviewRequestDto.getReviewImgRequestDtos().get(i).getImageUrl());
+        }
+    }
+
 
     public void createReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
         for (ReviewMenuRequestDto element : reviewRequestDto.getReviewMenuRequestDtos()) {

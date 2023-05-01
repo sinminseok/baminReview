@@ -7,7 +7,6 @@ import com.dto.requestDto.order.OrderRequestDto;
 import com.entity.order.Order;
 import com.entity.order.OrderMenu;
 import com.entity.order.OrderStatus;
-import com.repository.order.OrderMenuRepository;
 import com.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +20,9 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class OrderRegisterService {
+public class OrderService {
+
     private final OrderRepository orderRepository;
-    private final MapperConfig mapperConfig;
-    private
-    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 
     //루트 애그리거트인 Order에서 OrderMenu까지 관리
@@ -41,6 +38,13 @@ public class OrderRegisterService {
         Order save = orderRepository.save(order);
         return save.getId();
     }
+
+    public List<Order> findall(String memberNumber){
+        List<Order> orders = orderRepository.searchAllBymemberNumber(memberNumber);
+        return orders;
+
+    }
+
 
 
 

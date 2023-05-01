@@ -22,12 +22,13 @@ public class Review {
     @Column(name = "review_id")
     private Long id;
 
+    //변경x
     @Column(name = "member_number")
     private Long memberNumber;
-
+    //변경x
     @Column(name = "order_id")
     private Long orderId;
-
+    //변경x
     @Column(name = "shop_id")
     private Long shopId;
 
@@ -54,6 +55,13 @@ public class Review {
     public void addReviewDelivery(ReviewDelivery reviewDelivery){
         this.reviewDelivery = reviewDelivery;
 
+    }
+
+    public void updateReview(Review review){
+        this.content = review.content;
+        this.starPoint = review.starPoint;
+//        this.reviewImages = review.reviewImages;
+//        this.reviewMenus = reviewMenus;
     }
 
 

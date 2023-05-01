@@ -2,8 +2,6 @@ package com.dto.requestDto.order;
 
 
 import com.entity.order.OrderStatus;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderRequestDto {
 
-    private Long memberNumber;
+    private String memberNumber;
 
     private OrderStatus orderStatus;
 

@@ -23,4 +23,8 @@ public class ReviewImage {
     private Review review;
 
     private String imageUrl;
+
+    public void update(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
 }

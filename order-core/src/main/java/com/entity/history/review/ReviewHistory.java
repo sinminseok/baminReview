@@ -1,4 +1,4 @@
-package com.entity.history;
+package com.entity.history.review;
 
 
 import com.entity.review.ReviewStatus;

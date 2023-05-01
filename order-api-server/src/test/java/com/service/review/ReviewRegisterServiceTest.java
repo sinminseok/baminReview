@@ -8,13 +8,13 @@ import com.dto.requestDto.review.ReviewRequestDto;
 import com.entity.review.Review;
 import com.entity.review.ReviewDeliveryStatus;
 import com.repository.review.ReviewRepository;
+import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +25,15 @@ import java.util.Optional;
 public class ReviewRegisterServiceTest {
 
     @Autowired
-    private ReviewRegisterService reviewRegisterService;
+    private ReviewService reviewService;
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
+
 
 
     @Test
@@ -36,20 +41,25 @@ public class ReviewRegisterServiceTest {
     @Rollback(value = false)
     public void register등록테스트() {
         ReviewRequestDto reviewRequestDto = createReviewRequestDto();
-        Long register = reviewRegisterService.register(reviewRequestDto);
+        Long register = reviewService.register(reviewRequestDto);
         Optional<Review> byId = reviewRepository.findById(register);
         Assertions.assertThat(register).isNotNull();
 
     }
 
+
+
     @Test
     @Transactional
     @Rollback(value = false)
-    public void 테스트(){
-        Optional<Review> byId = reviewRepository.findById(2L);
-        System.out.println(byId.get().getReviewImages());
-    }
+    public void update테스트(){
 
+        ReviewRequestDto reviewRequestDto = createReviewRequestDto();
+        Long register = reviewService.register(reviewRequestDto);
+        ReviewRequestDto updateDto = updateReviewRequestDto();
+        reviewService.update(updateDto);
+
+    }
 
     public List<ReviewImgRequestDto> createReviewImgRequestDto() {
         return Collections.singletonList(ReviewImgRequestDto.builder()
@@ -80,6 +90,41 @@ public class ReviewRegisterServiceTest {
                 .reviewImgRequestDtos(createReviewImgRequestDto())
                 .reviewDeliveryRequestDto(createReviewDeliveryRequestDto())
                 .reviewMenuRequestDtos(createReviewMenuRequestDto())
+                .build();
+    }
+
+
+    public List<ReviewImgRequestDto> updateReviewImgRequestDto() {
+        return Collections.singletonList(ReviewImgRequestDto.builder()
+                .imageUrl("update URL")
+                .build());
+    }
+
+    public List<ReviewMenuRequestDto> updateReviewMenuRequestDto() {
+        return Collections.singletonList(ReviewMenuRequestDto.builder()
+                .menuName("update menu Name")
+                        .id(1L)
+                .build());
+    }
+
+    public ReviewDeliveryRequestDto updateReviewDeliveryRequestDto() {
+        return ReviewDeliveryRequestDto.builder()
+                .reviewDeliveryStatus(ReviewDeliveryStatus.LIKE)
+                .hateReason("update Reason ~")
+                .build();
+    }
+
+    public ReviewRequestDto updateReviewRequestDto() {
+        return ReviewRequestDto.builder()
+                .content("updatecontent")
+                .memberNumber(1L)
+                .reviewId(1L)
+                .orderId(2L)
+                .shopId(3L)
+                .starPoint(3.5)
+                .reviewImgRequestDtos(updateReviewImgRequestDto())
+                .reviewDeliveryRequestDto(updateReviewDeliveryRequestDto())
+                .reviewMenuRequestDtos(updateReviewMenuRequestDto())
                 .build();
     }
 }
