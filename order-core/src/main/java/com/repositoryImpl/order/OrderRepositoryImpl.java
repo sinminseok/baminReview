@@ -20,7 +20,6 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     public List<Order> searchAllBymemberNumber(String memberNumber) {
         return jpaQueryFactory.selectFrom(order)
                 .join(order.orderMenus).fetchJoin()
-
                 .where(order.memberNumber.eq(memberNumber))
                 .fetch();
     }

@@ -3,6 +3,7 @@ package com.service.order;
 
 import com.dto.requestDto.order.OrderMenuRequestDto;
 import com.dto.requestDto.order.OrderRequestDto;
+import com.dto.responseDto.order.OrderResponseDto;
 import com.entity.order.Order;
 import com.entity.order.OrderStatus;
 import org.assertj.core.api.Assertions;
@@ -39,8 +40,7 @@ public class OrderRegisterServiceTest {
         OrderRequestDto orderRequestDto = createOrderRequestDto();
         Long register = orderService.register(orderRequestDto);
 
-        List<Order> memberNumber = orderService.findall("memberNumber");
-        System.out.println("searchAllBymemberNumber = "+memberNumber.get(0).getOrderMenus().get(0).getMenuName());
+        orderService.findall("memberNumber");
     }
 
     public OrderRequestDto createOrderRequestDto(){

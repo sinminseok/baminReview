@@ -1,43 +1,50 @@
 package com.service.review;
-
-
-import com.config.MapperConfig;
 import com.dto.requestDto.review.ReviewDeliveryRequestDto;
 import com.dto.requestDto.review.ReviewImgRequestDto;
 import com.dto.requestDto.review.ReviewMenuRequestDto;
 import com.dto.requestDto.review.ReviewRequestDto;
-import com.entity.review.Review;
-import com.entity.review.ReviewDelivery;
-import com.entity.review.ReviewImage;
-import com.entity.review.ReviewMenu;
+import com.dto.responseDto.review.ReviewResponseDto;
+import com.entity.review.*;
 import com.repository.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    //shopId로 모든 리뷰조회
 
-    @Transactional
+    //shop에 등록된 모든 review 조회
+    public List<Review> findallByShopId(Long shopId){
+        List<Review> reviews = reviewRepository.searchAllByShopId(shopId);
+
+        return reviews;
+    }
+
+    //review 개별조회
+    public Review findById(Long reviewId){
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
+        return review;
+    }
+
+    //review 등록
     public Long register(ReviewRequestDto reviewRequestDto) {
         Review review = Review.builder()
                 .memberNumber(reviewRequestDto.getMemberNumber())
                 .content(reviewRequestDto.getContent())
                 .orderId(reviewRequestDto.getOrderId())
                 .starPoint(reviewRequestDto.getStarPoint())
+                .likeCount(0L)
                 .shopId(reviewRequestDto.getShopId())
+                .reviewLikes(new ArrayList<>())
                 .reviewImages(new ArrayList<>())
                 .reviewMenus(new ArrayList<>())
                 .build();
@@ -49,7 +56,7 @@ public class ReviewService {
         return save.getId();
     }
 
-    @Transactional
+    //review 업데이트
     public void update(ReviewRequestDto reviewRequestDto) {
 
         Review review = reviewRepository.findById(reviewRequestDto.getReviewId()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
@@ -64,11 +71,13 @@ public class ReviewService {
                 .starPoint(reviewRequestDto.getStarPoint())
                 .build();
 
-
         review.updateReview(updateReview);
 
 
     }
+
+
+
 
     public void updateReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
         for (int i = 0; i < review.getReviewMenus().size(); i++) {

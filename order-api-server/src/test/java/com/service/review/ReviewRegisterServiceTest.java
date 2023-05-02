@@ -28,6 +28,9 @@ public class ReviewRegisterServiceTest {
     private ReviewService reviewService;
 
     @Autowired
+    private ReviewLikeService reviewLikeService;
+
+    @Autowired
     private ReviewRepository reviewRepository;
 
     @Autowired
@@ -44,21 +47,48 @@ public class ReviewRegisterServiceTest {
         Long register = reviewService.register(reviewRequestDto);
         Optional<Review> byId = reviewRepository.findById(register);
         Assertions.assertThat(register).isNotNull();
-
     }
 
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    public void increaseLike테스트(){
+        ReviewRequestDto reviewRequestDto = createReviewRequestDto();
+        Long register = reviewService.register(reviewRequestDto);
+        reviewLikeService.increaseLike(register,33L);
+    }
+
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    public void decreaseLike테스트(){
+        ReviewRequestDto reviewRequestDto = createReviewRequestDto();
+        Long register = reviewService.register(reviewRequestDto);
+        reviewLikeService.increaseLike(register,33L);
+        reviewLikeService.decreaseLike(register,33L);
+    }
 
 
     @Test
     @Transactional
     @Rollback(value = false)
     public void update테스트(){
-
         ReviewRequestDto reviewRequestDto = createReviewRequestDto();
         Long register = reviewService.register(reviewRequestDto);
         ReviewRequestDto updateDto = updateReviewRequestDto();
         reviewService.update(updateDto);
 
+    }
+
+
+    @Test
+    @Transactional
+//    @Rollback(value = false)
+    public void findallByShopId테스트(){
+        ReviewRequestDto reviewRequestDto = createReviewRequestDto();
+        Long register = reviewService.register(reviewRequestDto);
+        List<Review> reviews = reviewService.findallByShopId(3L);
+        System.out.println("reviews = "+reviews.get(0).getReviewImages().get(0));
     }
 
     public List<ReviewImgRequestDto> createReviewImgRequestDto() {
@@ -85,6 +115,7 @@ public class ReviewRegisterServiceTest {
                 .content("testcontent")
                 .memberNumber(1L)
                 .orderId(2L)
+
                 .shopId(3L)
                 .starPoint(3.5)
                 .reviewImgRequestDtos(createReviewImgRequestDto())

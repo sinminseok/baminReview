@@ -14,21 +14,19 @@ import org.hibernate.envers.Audited;
 @AllArgsConstructor
 @NoArgsConstructor
 @Audited(withModifiedFlag = true)
-public class ReviewMenu {
+public class ReviewLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_menu_id")
+    @Column(name = "review_like_id")
     private Long id;
+
+
+
+    @Column(name = "member_number")
+    private Long memberNumber;
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "review_id")
     private Review review;
-
-    private String menuName;
-
-    public void update(String menuName){
-        this.menuName = menuName;
-    }
-
 }

@@ -24,7 +24,9 @@ public class ShopStatistics {
 
     private Long shopId;
 
+    //리뷰 개수
     private int reviewCount;
 
+    //리뷰평점
     private int starReviewCount;
 }
