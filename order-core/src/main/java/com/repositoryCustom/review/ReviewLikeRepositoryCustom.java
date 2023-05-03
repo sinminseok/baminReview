@@ -2,6 +2,11 @@ package com.repositoryCustom.review;
 
 import com.entity.review.ReviewLike;
 
+import java.util.Optional;
+
 public interface ReviewLikeRepositoryCustom {
-    ReviewLike searchByMemberNumber(Long memberNumber);
+    Optional<ReviewLike> searchByMemberNumber(Long memberNumber);
+
+
+
 }

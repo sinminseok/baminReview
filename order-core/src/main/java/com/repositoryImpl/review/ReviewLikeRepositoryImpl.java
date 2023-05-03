@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.repositoryCustom.review.ReviewLikeRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class ReviewLikeRepositoryImpl implements ReviewLikeRepositoryCustom {
 
@@ -13,8 +15,10 @@ public class ReviewLikeRepositoryImpl implements ReviewLikeRepositoryCustom {
     private QReviewLike reviewLike = QReviewLike.reviewLike;
 
     @Override
-    public ReviewLike searchByMemberNumber(Long memberNumber) {
-        return jpaQueryFactory.selectFrom(reviewLike)
-                .where(reviewLike.memberNumber.eq(memberNumber)).fetchOne();
+    public Optional<ReviewLike> searchByMemberNumber(Long memberNumber) {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(reviewLike)
+                .where(reviewLike.memberNumber.eq(memberNumber)).fetchOne());
     }
+
+
 }

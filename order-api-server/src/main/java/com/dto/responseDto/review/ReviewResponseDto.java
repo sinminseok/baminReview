@@ -29,9 +29,9 @@ public class ReviewResponseDto {
 
     private double starPoint;
 
-    private List<ReviewImgRequestDto> reviewImgRequestDtos;
+    private List<ReviewImgResponseDto> reviewImgResponseDtos;
 
-    private List<ReviewMenuRequestDto> reviewMenuRequestDtos;
+    private List<ReviewMenuResponseDto> reviewMenuResponseDtos;
 
-    private ReviewDeliveryRequestDto reviewDeliveryRequestDto;
+    private ReviewDeliveryResponseDto reviewDeliveryResponseDto;
 }

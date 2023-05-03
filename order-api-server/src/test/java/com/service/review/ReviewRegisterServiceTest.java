@@ -5,6 +5,7 @@ import com.dto.requestDto.review.ReviewDeliveryRequestDto;
 import com.dto.requestDto.review.ReviewImgRequestDto;
 import com.dto.requestDto.review.ReviewMenuRequestDto;
 import com.dto.requestDto.review.ReviewRequestDto;
+import com.dto.responseDto.review.ReviewResponseDto;
 import com.entity.review.Review;
 import com.entity.review.ReviewDeliveryStatus;
 import com.repository.review.ReviewRepository;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -37,8 +39,6 @@ public class ReviewRegisterServiceTest {
     private EntityManager entityManager;
 
 
-
-
     @Test
     @Transactional
     @Rollback(value = false)
@@ -52,27 +52,28 @@ public class ReviewRegisterServiceTest {
     @Test
     @Transactional
     @Rollback(value = false)
-    public void increaseLike테스트(){
+    public void increaseLike테스트() {
         ReviewRequestDto reviewRequestDto = createReviewRequestDto();
         Long register = reviewService.register(reviewRequestDto);
-        reviewLikeService.increaseLike(register,33L);
+        boolean value = reviewLikeService.increaseLike(register, 33L);
+        Assertions.assertThat(value).isTrue();
     }
 
     @Test
     @Transactional
     @Rollback(value = false)
-    public void decreaseLike테스트(){
+    public void decreaseLike테스트() {
         ReviewRequestDto reviewRequestDto = createReviewRequestDto();
         Long register = reviewService.register(reviewRequestDto);
-        reviewLikeService.increaseLike(register,33L);
-        reviewLikeService.decreaseLike(register,33L);
+        reviewLikeService.increaseLike(register, 33L);
+        reviewLikeService.decreaseLike(register, 33L);
     }
 
 
     @Test
     @Transactional
     @Rollback(value = false)
-    public void update테스트(){
+    public void update테스트() {
         ReviewRequestDto reviewRequestDto = createReviewRequestDto();
         Long register = reviewService.register(reviewRequestDto);
         ReviewRequestDto updateDto = updateReviewRequestDto();
@@ -84,11 +85,11 @@ public class ReviewRegisterServiceTest {
     @Test
     @Transactional
 //    @Rollback(value = false)
-    public void findallByShopId테스트(){
+    public void findallByShopId테스트() {
         ReviewRequestDto reviewRequestDto = createReviewRequestDto();
         Long register = reviewService.register(reviewRequestDto);
-        List<Review> reviews = reviewService.findallByShopId(3L);
-        System.out.println("reviews = "+reviews.get(0).getReviewImages().get(0));
+        List<ReviewResponseDto> reviews = reviewService.findallByShopId(3L);
+        System.out.println("reviews = " + reviews.get(0));
     }
 
     public List<ReviewImgRequestDto> createReviewImgRequestDto() {
@@ -134,7 +135,7 @@ public class ReviewRegisterServiceTest {
     public List<ReviewMenuRequestDto> updateReviewMenuRequestDto() {
         return Collections.singletonList(ReviewMenuRequestDto.builder()
                 .menuName("update menu Name")
-                        .id(1L)
+                .id(1L)
                 .build());
     }
 

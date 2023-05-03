@@ -10,11 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewImgResponseDto {
+public class ReviewMenuResponseDto {
 
     private Long id;
-
-    private String imageUrl;
-
-
+    private String menuName;
 }

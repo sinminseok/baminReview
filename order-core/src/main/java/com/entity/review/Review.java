@@ -52,41 +52,40 @@ public class Review extends BaseEntity {
     private Long likeCount;
 
     //리뷰 이미지
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
     //메뉴 리뷰
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewMenu> reviewMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "review",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     //배달 리뷰
-    @OneToOne(mappedBy = "review",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private ReviewDelivery reviewDelivery;
 
-    public void addReviewDelivery(ReviewDelivery reviewDelivery){
+    public void addReviewDelivery(ReviewDelivery reviewDelivery) {
         this.reviewDelivery = reviewDelivery;
     }
 
-    public void decreaseLike(ReviewLike reviewLike){
-        this.reviewLikes.remove(reviewLike);
+    public void decreaseLike(ReviewLike reviewLike) {
         this.likeCount -= 1L;
+        this.reviewLikes.remove(reviewLike);
 
     }
 
-    public void increaseLike(ReviewLike reviewLike){
+    public void increaseLike(ReviewLike reviewLike) {
         this.reviewLikes.add(reviewLike);
         this.likeCount += 1L;
     }
 
 
-    public void updateReview(Review review){
+    public void updateReview(Review review) {
         this.content = review.content;
         this.starPoint = review.starPoint;
     }
-
 
 
 }
