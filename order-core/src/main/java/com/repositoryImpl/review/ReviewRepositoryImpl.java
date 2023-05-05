@@ -23,25 +23,25 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .where(review.shopId.eq(shopId)).fetch();
     }
 
-    @Override
-    public List<Review> searchArrangeLike(Long shopId) {
-        return jpaQueryFactory.selectFrom(review)
-                .orderBy(
-                        review.likeCount.desc()
-                )
-                .where(review.shopId.eq(shopId))
-                .fetch();
-    }
+//    @Override
+//    public List<Review> searchArrangeLike(Long shopId) {
+//        return jpaQueryFactory.selectFrom(review)
+//                .orderBy(
+//                        review.likeCount.desc()
+//                )
+//                .where(review.shopId.eq(shopId))
+//                .fetch();
+//    }
 
-    @Override
-    public List<Review> searchArrangeDatetime(Long shopId) {
-        return jpaQueryFactory.selectFrom(review)
-                .orderBy(
-                        review.createdBy.desc()
-                )
-                .where(review.shopId.eq(shopId))
-                .fetch();
-    }
+//    @Override
+//    public List<Review> searchArrangeDatetime(Long shopId) {
+//        return jpaQueryFactory.selectFrom(review)
+//                .orderBy(
+//                        review.createdBy.desc()
+//                )
+//                .where(review.shopId.eq(shopId))
+//                .fetch();
+//    }
 
 
 //    @Override

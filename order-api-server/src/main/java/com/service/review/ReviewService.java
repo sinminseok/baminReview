@@ -12,13 +12,13 @@ import com.dto.responseDto.review.ReviewResponseDto;
 import com.entity.review.*;
 import com.repository.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,6 +27,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MapperConfig mapperConfig;
+    private final ApplicationEventPublisher publisher;
 
 
     //shop에 등록된 모든 review 조회
@@ -35,10 +36,10 @@ public class ReviewService {
         return changeReviewDtoList(reviews);
     }
 
-    public List<ReviewResponseDto> arrangeByLike(Long shopId){
-        List<Review> reviews = reviewRepository.searchArrangeLike(shopId);
-        return changeReviewDtoList(reviews);
-    }
+//    public List<ReviewResponseDto> arrangeByLike(Long shopId) {
+//        List<Review> reviews = reviewRepository.searchArrangeLike(shopId);
+//        return changeReviewDtoList(reviews);
+//    }
 
     //review 개별조회
     public Review findById(Long reviewId) {
@@ -67,7 +68,7 @@ public class ReviewService {
         return save.getId();
     }
 
-    //review 업데이트
+    //review 수정
     public void update(ReviewRequestDto reviewRequestDto) {
 
         Review review = reviewRepository.findById(reviewRequestDto.getReviewId()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
@@ -105,9 +106,9 @@ public class ReviewService {
         }
     }
 
-    public List<ReviewResponseDto> changeReviewDtoList(List<Review> reviews){
+    public List<ReviewResponseDto> changeReviewDtoList(List<Review> reviews) {
         List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
-        for(Review element : reviews){
+        for (Review element : reviews) {
             reviewResponseDtos.add(ReviewResponseDto.builder()
                     .content(element.getContent())
                     .reviewId(element.getId())
@@ -122,9 +123,10 @@ public class ReviewService {
 
 
     }
-    public List<ReviewMenuResponseDto> changeMenuResponseDto(List<ReviewMenu> reviewMenus){
+
+    public List<ReviewMenuResponseDto> changeMenuResponseDto(List<ReviewMenu> reviewMenus) {
         List<ReviewMenuResponseDto> reviewMenuResponseDtos = new ArrayList<>();
-        for(ReviewMenu element :  reviewMenus){
+        for (ReviewMenu element : reviewMenus) {
             ReviewMenuResponseDto reviewMenu = ReviewMenuResponseDto.builder()
                     .id(element.getId())
                     .menuName(element.getMenuName())
@@ -135,9 +137,9 @@ public class ReviewService {
     }
 
 
-    public List<ReviewImgResponseDto> changeImgResponseDto(List<ReviewImage> reviewImages){
+    public List<ReviewImgResponseDto> changeImgResponseDto(List<ReviewImage> reviewImages) {
         List<ReviewImgResponseDto> reviewImgResponseDtos = new ArrayList<>();
-        for(ReviewImage element :  reviewImages){
+        for (ReviewImage element : reviewImages) {
             ReviewImgResponseDto build = ReviewImgResponseDto.builder()
                     .id(element.getId())
                     .imageUrl(element.getImageUrl())
