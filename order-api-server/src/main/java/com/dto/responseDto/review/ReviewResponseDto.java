@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -24,6 +25,10 @@ public class ReviewResponseDto {
     private Long orderId;
 
     private Long shopId;
+
+    private Long likeCount;
+
+    private LocalDateTime localDateTime;
 
     private String content;
 

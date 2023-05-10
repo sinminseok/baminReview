@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
+
 @Entity
 @Getter
 @Builder
@@ -15,6 +16,7 @@ import org.hibernate.envers.Audited;
 @NoArgsConstructor
 @Audited(withModifiedFlag = true)
 public class OrderMenu {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

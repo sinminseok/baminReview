@@ -8,10 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
-@Entity
+
+
 @Getter
 @Builder
 @AllArgsConstructor
+@Entity
 @NoArgsConstructor
 @Audited(withModifiedFlag = true)
 public class ReviewMenu {

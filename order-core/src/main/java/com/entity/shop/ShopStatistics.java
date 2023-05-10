@@ -11,9 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-@Entity
 @Getter
 @Builder
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShopStatistics {

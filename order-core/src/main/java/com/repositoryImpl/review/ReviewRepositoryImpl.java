@@ -1,78 +1,92 @@
 package com.repositoryImpl.review;
 
-import com.entity.review.*;
-import com.querydsl.core.BooleanBuilder;
+import com.entity.review.QReview;
+import com.entity.review.Review;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.repositoryCustom.review.ReviewRepositoryCustom;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.entity.review.QReview.review;
+import static com.entity.review.QReviewMenu.reviewMenu;
 
 @RequiredArgsConstructor
-public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
-    private final JPAQueryFactory jpaQueryFactory;
-    private QReview review = QReview.review;
+@Repository
+public class ReviewRepositoryImpl {
 
-    //.fetch() 는 리스트로 결과를 반환하는 방법이고 데이터가 없을경우 빈 리스트를 반환해준다.
-    @Override
-    public List<Review> searchAllByShopId(Long shopId) {
+    private final JPAQueryFactory jpaQueryFactory;
+
+
+    //shop에 등록된 모든 review 조회
+    public List<Review> findAllByShopId(Long shopId) {
         return jpaQueryFactory.selectFrom(review)
-                .join(review.reviewImages).fetchJoin()
-                .where(review.shopId.eq(shopId)).fetch();
+                .where(checkShopId(shopId))
+                .join(review.reviewMenus, reviewMenu).fetchJoin()
+                .fetch();
     }
 
-//    @Override
-//    public List<Review> searchArrangeLike(Long shopId) {
-//        return jpaQueryFactory.selectFrom(review)
-//                .orderBy(
-//                        review.likeCount.desc()
-//                )
-//                .where(review.shopId.eq(shopId))
-//                .fetch();
-//    }
+    //이미지가 없는리뷰
+    public List<Review> findAllWithOutImg(Long shopId) {
+        return jpaQueryFactory.selectFrom(review)
+                .where(checkShopId(shopId), existImage(review,false))
+                .join(review.reviewMenus,reviewMenu).fetchJoin()
+                .fetch();
+    }
 
-//    @Override
-//    public List<Review> searchArrangeDatetime(Long shopId) {
-//        return jpaQueryFactory.selectFrom(review)
-//                .orderBy(
-//                        review.createdBy.desc()
-//                )
-//                .where(review.shopId.eq(shopId))
-//                .fetch();
-//    }
+    //이미지가 있는 리뷰
+    public List<Review> findAllWithImg(Long shopId) {
+        return jpaQueryFactory.selectFrom(review)
+                .where(checkShopId(shopId), existImage(review,true))
+                .join(review.reviewMenus,reviewMenu).fetchJoin()
+                .fetch();
+    }
 
-
-//    @Override
-//    public List<Academy> searchByDynamic(Long m, String phoneNumber) {
-//        return queryFactory
-//                .selectFrom(academy)
-//                .where(eqName(name),
-//                        eqAddress(address),
-//                        eqPhoneNumber(phoneNumber))
-//                .fetch();
-//    }
-//
-//    //BooleanExpression은 where절에서 사용 할 수 있는값이다.
-//    private BooleanExpression eqName(String name) {
-//        if (StringUtils.isEmpty(name)) {
-//            return null;
-//        }
-//        return academy.name.eq(name);
-//    }
-//
-//    private BooleanExpression eqAddress(String address) {
-//        if (StringUtils.isEmpty(address)) {
-//            return null;
-//        }
-//        return academy.address.eq(address);
-//    }
+    //reviewId로 단일 조회
+    public Optional<Review> findByReviewId(Long reviewId) {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(review)
+                .where(review.id.eq(reviewId))
+                .join(review.reviewMenus, reviewMenu).fetchJoin()
+                .fetchOne());
+    }
 
 
+    //최신순 정렬
+    public List<Review> sortByDateTime(Long shopId) {
+        return jpaQueryFactory.selectFrom(review)
+                .orderBy(
+                        review.createdDate.desc()
+                )
+                .where(review.shopId.eq(shopId))
+                .fetch();
+    }
 
 
+    public List<Review> sortByLikeCount(Long shopId) {
+        return jpaQueryFactory.selectFrom(review)
+                .orderBy(
+                        review.likeCount.desc()
+                )
+                .where(review.shopId.eq(shopId))
+                .fetch();
+    }
 
+    private BooleanExpression checkShopId(Long shopId) {
+        return review.shopId.eq(shopId);
+    }
+
+
+    private BooleanExpression existImage(QReview review,boolean exisit) {
+        if(exisit == true){
+            //이미지가 있는 리뷰 반환
+            return review.reviewImages.isNotEmpty();
+        }else{
+            //이미지가 없는 리뷰 반환
+            return review.reviewImages.isEmpty();
+        }
+    }
 
 
 }

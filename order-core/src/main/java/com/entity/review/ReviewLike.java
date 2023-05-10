@@ -8,9 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
-@Entity
+
+
 @Getter
 @Builder
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Audited(withModifiedFlag = true)
@@ -21,12 +23,13 @@ public class ReviewLike {
     @Column(name = "review_like_id")
     private Long id;
 
-
-
     @Column(name = "member_number")
     private Long memberNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "review_id")
-    private Review review;
+    @Column(name = "review_id")
+    private Long reviewId;
+
+//    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+//    @JoinColumn(name = "review_id")
+//    private Review review;
 }

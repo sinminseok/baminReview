@@ -3,17 +3,18 @@ link : https://techblog.woowahan.com/10600/
 
 1.리뷰 등록,수정,삭제
  - 리뷰는 배달 리뷰,메뉴 리뷰,리뷰 이미지,리뷰 내용,별점으로 구성됨(done)
- - 리부 C/U/D가 발생하면 리뷰 변경 이벤트를 발행합니다.
+ - 리부 C/U/D가 발생하면 리뷰 변경 이벤트를 발행합니다.(done)
  - 모든 리뷰 데이터는 히스토리가 관리 되어야 합니다.(done)
 
 2.리뷰 조회
- - 정렬 조건(최신,좋아요 순) (done)
- - 필터 조건(사진이 있는 리뷰,좋아요가 있는 리뷰)
+ - 정렬 조건(최신,좋아요 순) - (done)
+ - 필터 조건(사진이 있는 리뷰,좋아요가 있는 리뷰) - (done)
 
 3.리뷰 좋아요 등록,취소(done)
 
 4.가게 리뷰 통계
- - 리뷰C/U/D로 이벤트가 발생했을 때, 이를 수신하여 가게 리뷰 통계를 집계합니다.
+ - 리뷰C/U/D로 이벤트가 발생했을 때, 이를 수신하여 가게 리뷰 통계를 집계합니다. (spring boot 3.0.x에선 aws sqs listener가 정상적으로 실행되지 않는다.
+ 때문에 스케쥴러를 이용해 하루에 한번 데이터를 가져와 리뷰 통계를 진행하도록 구현했습니다.)
 
 5.모든 기능 화면 제공
 
@@ -26,10 +27,11 @@ link : https://techblog.woowahan.com/10600/
  -QueryDSL(done)
  -H2,MySQL (done)
  -Vue.js or Flutter
- -amazonS3 , amazon SNS, amazon SQS
+ -amazonS3 , amazon SNS(done), amazon SQS(done)
+ -Swagger
 
 1주차 : 도메인 설계(DDD),Repository,Entity,Service 제작(C,R,U,D)
-2주차 :  ...
+2주차 : ...
 3주차 : ...
 4주차 : ...
 5주차 : ...

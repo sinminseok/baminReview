@@ -1,5 +1,6 @@
 package com.service.review;
 
+import com.config.AwsConfig;
 import com.config.MapperConfig;
 import com.dto.requestDto.review.ReviewDeliveryRequestDto;
 import com.dto.requestDto.review.ReviewImgRequestDto;
@@ -10,11 +11,17 @@ import com.dto.responseDto.review.ReviewImgResponseDto;
 import com.dto.responseDto.review.ReviewMenuResponseDto;
 import com.dto.responseDto.review.ReviewResponseDto;
 import com.entity.review.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.repository.review.ReviewRepository;
+import com.repositoryImpl.review.ReviewRepositoryImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,28 +34,25 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MapperConfig mapperConfig;
-    private final ApplicationEventPublisher publisher;
-
+    private final AwsConfig awsConfig;
+    private final ObjectMapper objectMapper;
+    private final ReviewRepositoryImpl reviewRepositoryImpl;
 
     //shop에 등록된 모든 review 조회
     public List<ReviewResponseDto> findallByShopId(Long shopId) {
-        List<Review> reviews = reviewRepository.searchAllByShopId(shopId);
+        List<Review> reviews = reviewRepositoryImpl.findAllByShopId(shopId);
         return changeReviewDtoList(reviews);
     }
 
-//    public List<ReviewResponseDto> arrangeByLike(Long shopId) {
-//        List<Review> reviews = reviewRepository.searchArrangeLike(shopId);
-//        return changeReviewDtoList(reviews);
-//    }
 
     //review 개별조회
-    public Review findById(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
-        return review;
+    public ReviewResponseDto findById(Long reviewId) {
+        Review review = reviewRepositoryImpl.findByReviewId(reviewId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
+        return changeReviewDto(review);
     }
 
     //review 등록
-    public Long register(ReviewRequestDto reviewRequestDto) {
+    public Long register(ReviewRequestDto reviewRequestDto) throws JsonProcessingException {
         Review review = Review.builder()
                 .memberNumber(reviewRequestDto.getMemberNumber())
                 .content(reviewRequestDto.getContent())
@@ -56,7 +60,6 @@ public class ReviewService {
                 .starPoint(reviewRequestDto.getStarPoint())
                 .likeCount(0L)
                 .shopId(reviewRequestDto.getShopId())
-                .reviewLikes(new ArrayList<>())
                 .reviewImages(new ArrayList<>())
                 .reviewMenus(new ArrayList<>())
                 .build();
@@ -65,8 +68,12 @@ public class ReviewService {
         createReviewDelivery(reviewRequestDto.getReviewDeliveryRequestDto(), review);
 
         Review save = reviewRepository.save(review);
+        //리뷰 이벤트 발송
+    //    awsSnsPublishReview(review);
+
         return save.getId();
     }
+
 
     //review 수정
     public void update(ReviewRequestDto reviewRequestDto) {
@@ -106,7 +113,11 @@ public class ReviewService {
         }
     }
 
-    public List<ReviewResponseDto> changeReviewDtoList(List<Review> reviews) {
+
+
+
+    // dto entity 변경
+    private List<ReviewResponseDto> changeReviewDtoList(List<Review> reviews) {
         List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
         for (Review element : reviews) {
             reviewResponseDtos.add(ReviewResponseDto.builder()
@@ -124,7 +135,21 @@ public class ReviewService {
 
     }
 
-    public List<ReviewMenuResponseDto> changeMenuResponseDto(List<ReviewMenu> reviewMenus) {
+    private ReviewResponseDto changeReviewDto(Review review){
+        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
+                .content(review.getContent())
+                .reviewId(review.getId())
+                .shopId(review.getShopId())
+                .starPoint(review.getStarPoint())
+                .reviewDeliveryResponseDto(mapperConfig.modelMapper().map(review.getReviewDelivery(), ReviewDeliveryResponseDto.class))
+                .reviewMenuResponseDtos(changeMenuResponseDto(review.getReviewMenus()))
+                .reviewImgResponseDtos(changeImgResponseDto(review.getReviewImages()))
+
+                .build();
+        return reviewResponseDto;
+    }
+
+    private List<ReviewMenuResponseDto> changeMenuResponseDto(List<ReviewMenu> reviewMenus) {
         List<ReviewMenuResponseDto> reviewMenuResponseDtos = new ArrayList<>();
         for (ReviewMenu element : reviewMenus) {
             ReviewMenuResponseDto reviewMenu = ReviewMenuResponseDto.builder()
@@ -137,7 +162,7 @@ public class ReviewService {
     }
 
 
-    public List<ReviewImgResponseDto> changeImgResponseDto(List<ReviewImage> reviewImages) {
+    private List<ReviewImgResponseDto> changeImgResponseDto(List<ReviewImage> reviewImages) {
         List<ReviewImgResponseDto> reviewImgResponseDtos = new ArrayList<>();
         for (ReviewImage element : reviewImages) {
             ReviewImgResponseDto build = ReviewImgResponseDto.builder()
@@ -151,7 +176,7 @@ public class ReviewService {
     }
 
 
-    public void createReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
+    private void createReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
         for (ReviewMenuRequestDto element : reviewRequestDto.getReviewMenuRequestDtos()) {
             ReviewMenu reviewMenu = ReviewMenu.builder()
                     .menuName(element.getMenuName())
@@ -161,7 +186,7 @@ public class ReviewService {
         }
     }
 
-    public void createReviewImages(ReviewRequestDto reviewRequestDto, Review review) {
+    private void createReviewImages(ReviewRequestDto reviewRequestDto, Review review) {
         for (ReviewImgRequestDto element : reviewRequestDto.getReviewImgRequestDtos()) {
             ReviewImage reviewImage = ReviewImage.builder()
                     .imageUrl(element.getImageUrl())
@@ -171,7 +196,7 @@ public class ReviewService {
         }
     }
 
-    public void createReviewDelivery(ReviewDeliveryRequestDto reviewDeliveryRequestDto, Review review) {
+    private void createReviewDelivery(ReviewDeliveryRequestDto reviewDeliveryRequestDto, Review review) {
         ReviewDelivery reviewDelivery = ReviewDelivery.builder()
                 .hateReason(reviewDeliveryRequestDto.getHateReason())
                 .review(review)
@@ -179,5 +204,22 @@ public class ReviewService {
                 .build();
         review.addReviewDelivery(reviewDelivery);
 
+    }
+
+
+    private PublishResponse awsSnsPublishReview(Review scriptData) throws JsonProcessingException {
+        PublishRequest publishRequest = PublishRequest.builder()
+                .topicArn(awsConfig.getSnsTopicARN())
+                .subject("Review Event!")
+                .message(objectMapper.writeValueAsString(scriptData))
+                .messageGroupId("sns-group")
+                .build();
+
+
+        SnsClient snsClient = awsConfig.getSnsClient();
+        PublishResponse publishResponse = snsClient.publish(publishRequest);
+
+        snsClient.close();
+        return publishResponse;
     }
 }

@@ -22,6 +22,8 @@ public class ReviewRequestDto {
 
     private String content;
 
+
+
     private double starPoint;
 
     private List<ReviewImgRequestDto> reviewImgRequestDtos;

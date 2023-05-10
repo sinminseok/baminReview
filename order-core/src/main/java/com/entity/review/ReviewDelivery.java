@@ -8,9 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
-@Entity
+
+
 @Getter
 @Builder
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Audited(withModifiedFlag = true)

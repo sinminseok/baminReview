@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+
 @Entity
 @Getter
 @Builder
@@ -15,7 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Member {
 
-    @Id
+    @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 

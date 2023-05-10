@@ -45,10 +45,10 @@ public class OrderService {
         return save.getId();
     }
 
-    public List<OrderResponseDto> findall(String memberNumber) {
-        List<Order> orders = orderRepository.searchAllBymemberNumber(memberNumber);
-        return changeOrderDtoList(orders);
-    }
+//    public List<OrderResponseDto> findall(String memberNumber) {
+//        List<Order> orders = orderRepository.searchAllBymemberNumber(memberNumber);
+//        return changeOrderDtoList(orders);
+//    }
 
     public OrderResponseDto findByOrderId(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 주문입니다."));

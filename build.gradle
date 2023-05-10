@@ -70,6 +70,15 @@ project(':order-api-server') {
 	}
 }
 
+project(':order-event') {
+	bootJar { enabled = true }
+	jar { enabled = false }
+
+	dependencies {
+		implementation project(':order-core') // 컴파일 시 velog-core project 로딩
+	}
+}
+
 project(':order-batch-server') {
 	bootJar { enabled = true }
 	jar { enabled = false }

@@ -1,7 +1,6 @@
 package com.entity.review;
-
-
 import com.entity.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +12,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
+@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +21,6 @@ import java.util.List;
 public class Review extends BaseEntity {
 
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
     private Long id;
@@ -51,33 +49,34 @@ public class Review extends BaseEntity {
     //리뷰 좋아요
     private Long likeCount;
 
-    //리뷰 이미지
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewImage> reviewImages = new ArrayList<>();
 
-    //메뉴 리뷰
+    //리뷰메뉴
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ReviewMenu> reviewMenus = new ArrayList<>();
 
+
+    //리뷰 이미지
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewLike> reviewLikes = new ArrayList<>();
+    @JsonIgnore
+    private List<ReviewImage> reviewImages = new ArrayList<>();
+
 
     //배달 리뷰
     @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private ReviewDelivery reviewDelivery;
 
     public void addReviewDelivery(ReviewDelivery reviewDelivery) {
         this.reviewDelivery = reviewDelivery;
     }
 
-    public void decreaseLike(ReviewLike reviewLike) {
+    public void decreaseLike() {
         this.likeCount -= 1L;
-        this.reviewLikes.remove(reviewLike);
 
     }
 
-    public void increaseLike(ReviewLike reviewLike) {
-        this.reviewLikes.add(reviewLike);
+    public void increaseLike() {
         this.likeCount += 1L;
     }
 

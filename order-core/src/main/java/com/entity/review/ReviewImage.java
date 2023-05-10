@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
+
 @Entity
 @Getter
 @Builder
@@ -16,11 +17,14 @@ import org.hibernate.envers.Audited;
 @Audited(withModifiedFlag = true)
 public class ReviewImage {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_image_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "review_id")
     private Review review;
 

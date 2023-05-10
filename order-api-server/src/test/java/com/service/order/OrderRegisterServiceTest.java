@@ -40,7 +40,7 @@ public class OrderRegisterServiceTest {
         OrderRequestDto orderRequestDto = createOrderRequestDto();
         Long register = orderService.register(orderRequestDto);
 
-        orderService.findall("memberNumber");
+//        orderService.findall("memberNumber");
     }
 
     public OrderRequestDto createOrderRequestDto(){
