@@ -34,6 +34,7 @@ public class ReviewSortService {
         return changeReviewDtoList(reviews);
     }
 
+    // 최신순
     public List<ReviewResponseDto> sortByDateTime(Long shopId) {
         List<Review> reviews = reviewRepositoryImpl.sortByDateTime(shopId);
         return changeReviewDtoList(reviews);

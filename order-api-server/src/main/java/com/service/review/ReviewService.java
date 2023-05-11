@@ -15,8 +15,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.repository.review.ReviewRepository;
 import com.repositoryImpl.review.ReviewRepositoryImpl;
+import com.sns.ReviewSnsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.sns.SnsClient;
@@ -34,9 +34,32 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MapperConfig mapperConfig;
-    private final AwsConfig awsConfig;
-    private final ObjectMapper objectMapper;
     private final ReviewRepositoryImpl reviewRepositoryImpl;
+    private final ReviewSnsService reviewSnsService;
+
+// --------------------------CREATE METHOD ---------------------------
+    public Long register(ReviewRequestDto reviewRequestDto) throws JsonProcessingException {
+        Review review = createReview(reviewRequestDto);
+        createReviewImages(reviewRequestDto, review);
+        createReviewMenus(reviewRequestDto, review);
+        createReviewDelivery(reviewRequestDto.getReviewDeliveryRequestDto(), review);
+
+        Review save = reviewRepository.save(review);
+
+        reviewSnsService.createSns(save);
+
+        return save.getId();
+    }
+
+
+
+// --------------------------READ METHOD -----------------------------
+
+    //review 단일조회
+    public ReviewResponseDto findById(Long reviewId) {
+        Review review = reviewRepositoryImpl.findByReviewId(reviewId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
+        return changeReviewDto(review);
+    }
 
     //shop에 등록된 모든 review 조회
     public List<ReviewResponseDto> findallByShopId(Long shopId) {
@@ -44,35 +67,23 @@ public class ReviewService {
         return changeReviewDtoList(reviews);
     }
 
+    public List<ReviewResponseDto> findallFilterImg(Long shopId,boolean withImg){
 
-    //review 개별조회
-    public ReviewResponseDto findById(Long reviewId) {
-        Review review = reviewRepositoryImpl.findByReviewId(reviewId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
-        return changeReviewDto(review);
+        if(withImg == true){
+        //사진이 있는 리뷰 반환
+            List<Review> withImgs = reviewRepositoryImpl.findAllWithImg(shopId);
+            return changeReviewDtoList(withImgs);
+        }else{
+            //사진이 없는 리뷰 반환
+            List<Review> withoutImgs =reviewRepositoryImpl.findAllWithOutImg(shopId);
+            return changeReviewDtoList(withoutImgs);
+        }
     }
 
-    //review 등록
-    public Long register(ReviewRequestDto reviewRequestDto) throws JsonProcessingException {
-        Review review = Review.builder()
-                .memberNumber(reviewRequestDto.getMemberNumber())
-                .content(reviewRequestDto.getContent())
-                .orderId(reviewRequestDto.getOrderId())
-                .starPoint(reviewRequestDto.getStarPoint())
-                .likeCount(0L)
-                .shopId(reviewRequestDto.getShopId())
-                .reviewImages(new ArrayList<>())
-                .reviewMenus(new ArrayList<>())
-                .build();
-        createReviewImages(reviewRequestDto, review);
-        createReviewMenus(reviewRequestDto, review);
-        createReviewDelivery(reviewRequestDto.getReviewDeliveryRequestDto(), review);
 
-        Review save = reviewRepository.save(review);
-        //리뷰 이벤트 발송
-    //    awsSnsPublishReview(review);
 
-        return save.getId();
-    }
+
+// -------------------------- UPDATE METHOD ---------------------------
 
 
     //review 수정
@@ -94,6 +105,18 @@ public class ReviewService {
 
 
     }
+    // --------------------------DELETE METHOD ---------------------------
+
+
+    public void delete(Long reviewId){
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 리뷰입니다."));
+        reviewRepository.delete(review);
+    }
+
+
+
+
+    // --------------------------PRIVATE METHOD ---------------------------
 
 
     public void updateReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
@@ -112,8 +135,6 @@ public class ReviewService {
             review.getReviewImages().get(i).update(reviewRequestDto.getReviewImgRequestDtos().get(i).getImageUrl());
         }
     }
-
-
 
 
     // dto entity 변경
@@ -175,6 +196,18 @@ public class ReviewService {
 
     }
 
+    private Review createReview(ReviewRequestDto reviewRequestDto){
+        return Review.builder()
+                .memberNumber(reviewRequestDto.getMemberNumber())
+                .content(reviewRequestDto.getContent())
+                .orderId(reviewRequestDto.getOrderId())
+                .starPoint(reviewRequestDto.getStarPoint())
+                .likeCount(0L)
+                .shopId(reviewRequestDto.getShopId())
+                .reviewImages(new ArrayList<>())
+                .reviewMenus(new ArrayList<>())
+                .build();
+    }
 
     private void createReviewMenus(ReviewRequestDto reviewRequestDto, Review review) {
         for (ReviewMenuRequestDto element : reviewRequestDto.getReviewMenuRequestDtos()) {
@@ -207,19 +240,7 @@ public class ReviewService {
     }
 
 
-    private PublishResponse awsSnsPublishReview(Review scriptData) throws JsonProcessingException {
-        PublishRequest publishRequest = PublishRequest.builder()
-                .topicArn(awsConfig.getSnsTopicARN())
-                .subject("Review Event!")
-                .message(objectMapper.writeValueAsString(scriptData))
-                .messageGroupId("sns-group")
-                .build();
+    // -------------------------- EVENT METHOD ---------------------------
 
 
-        SnsClient snsClient = awsConfig.getSnsClient();
-        PublishResponse publishResponse = snsClient.publish(publishRequest);
-
-        snsClient.close();
-        return publishResponse;
-    }
 }

@@ -34,7 +34,5 @@ public class ReviewStatisticsService {
 
     }
 
-    private void processInvoice(String body) {
-        log.info("Processing invoice generation and sending invoice emails from here..");
-    }
+
 }

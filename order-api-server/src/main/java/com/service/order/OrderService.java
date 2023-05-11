@@ -34,25 +34,26 @@ public class OrderService {
     //루트 애그리거트인 Order에서 OrderMenu까지 관리
     public Long register(OrderRequestDto orderRequestDto) {
         //Order 엔티티 생성
-        Order order = Order.builder()
-                .orderStatus(OrderStatus.DURING)
-                .orderTime(LocalDateTime.now())
-                .memberNumber(orderRequestDto.getMemberNumber())
-                .orderMenus(new ArrayList<>())
-                .build();
+        Order order = createOrder(orderRequestDto);
         createOrderMenus(orderRequestDto, order);
         Order save = orderRepository.save(order);
         return save.getId();
     }
 
-//    public List<OrderResponseDto> findall(String memberNumber) {
-//        List<Order> orders = orderRepository.searchAllBymemberNumber(memberNumber);
-//        return changeOrderDtoList(orders);
-//    }
+
 
     public OrderResponseDto findByOrderId(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 주문입니다."));
         return changeOrderDto(order);
+    }
+
+    public Order createOrder(OrderRequestDto orderRequestDto){
+        return Order.builder()
+                .orderStatus(OrderStatus.DURING)
+                .orderTime(LocalDateTime.now())
+                .memberNumber(orderRequestDto.getMemberNumber())
+                .orderMenus(new ArrayList<>())
+                .build();
     }
 
     public OrderResponseDto changeOrderDto(Order order) {

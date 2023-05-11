@@ -19,7 +19,6 @@ import java.util.Optional;
 public class ReviewLikeService {
     private final ReviewLikeRepository reviewLikeRepository;
     private final ReviewRepository reviewRepository;
-    private final ReviewRepositoryImpl reviewRepositoryImpl;
     private final ReviewLikeRepositoryImpl reviewLikeRepositoryImpl;
 
     //리뷰 좋아요 등록

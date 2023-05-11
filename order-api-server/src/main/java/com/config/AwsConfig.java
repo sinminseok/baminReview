@@ -7,6 +7,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
@@ -34,16 +35,6 @@ public class AwsConfig {
     @Value("${cloud.aws.sns.topic.arn}")
     private String snsTopicARN;
 
-    @Bean
-    public QueueMessagingTemplate queueMessagingTemplate() {
-        return new QueueMessagingTemplate(amazonSQSAsync());
-    }
-
-    public AmazonSQSAsync amazonSQSAsync() {
-        return AmazonSQSAsyncClientBuilder.standard().withRegion(awsRegion)
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsAccessKey, awsSecretKey)))
-                .build();
-    }
 
     @Bean // SNS Client 세팅
     public SnsClient getSnsClient() {
@@ -61,17 +52,5 @@ public class AwsConfig {
         return () -> awsBasicCredentials;
     }
 
-
-    @Bean // SQS Client 세팅
-
-    public AmazonSQS amazonSQS() {
-        AWSCredentials credentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
-        return AmazonSQSAsyncClientBuilder
-                .standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-
-                .withRegion(awsRegion)
-                .build();
-    }
 
 }
