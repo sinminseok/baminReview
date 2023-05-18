@@ -1,14 +1,11 @@
 package com.sns;
 
 import com.config.AwsConfig;
-import com.dto.requestDto.review.ReviewDeliveryRequestDto;
 import com.entity.review.Review;
-import com.entity.review.ReviewDelivery;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.PublishResponse;
@@ -36,6 +33,7 @@ public class ReviewSnsService implements AwsSnsService {
         PublishResponse publishResponse = snsClient.publish(publishRequest);
 
         snsClient.close();
+
         return publishResponse;
     }
 }

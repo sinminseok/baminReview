@@ -12,16 +12,13 @@ import com.dto.responseDto.review.ReviewMenuResponseDto;
 import com.dto.responseDto.review.ReviewResponseDto;
 import com.entity.review.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.repository.review.ReviewRepository;
 import com.repositoryImpl.review.ReviewRepositoryImpl;
+import com.sns.AwsSnsService;
 import com.sns.ReviewSnsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.sns.SnsClient;
-import software.amazon.awssdk.services.sns.model.PublishRequest;
-import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +32,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MapperConfig mapperConfig;
     private final ReviewRepositoryImpl reviewRepositoryImpl;
-    private final ReviewSnsService reviewSnsService;
+    private final AwsSnsService awsSnsService;
 
 // --------------------------CREATE METHOD ---------------------------
     public Long register(ReviewRequestDto reviewRequestDto) throws JsonProcessingException {
@@ -44,9 +41,10 @@ public class ReviewService {
         createReviewMenus(reviewRequestDto, review);
         createReviewDelivery(reviewRequestDto.getReviewDeliveryRequestDto(), review);
 
+        //model로 보내는 요청
         Review save = reviewRepository.save(review);
 
-        reviewSnsService.createSns(save);
+        awsSnsService.createSns(save);
 
         return save.getId();
     }
@@ -165,7 +163,6 @@ public class ReviewService {
                 .reviewDeliveryResponseDto(mapperConfig.modelMapper().map(review.getReviewDelivery(), ReviewDeliveryResponseDto.class))
                 .reviewMenuResponseDtos(changeMenuResponseDto(review.getReviewMenus()))
                 .reviewImgResponseDtos(changeImgResponseDto(review.getReviewImages()))
-
                 .build();
         return reviewResponseDto;
     }
